@@ -14,3 +14,12 @@ app.get('/', (req, res) => res.send('API is running...'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+
+const userRoute=require('./routes/user_route')
+app.use('/user',userRoute)
+
+const farmerRoute=require('./routes/farmer_route')
+app.use('/farmer',farmerRoute)
