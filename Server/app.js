@@ -23,3 +23,6 @@ app.use('/user',userRoute)
 
 const farmerRoute=require('./routes/farmer_route')
 app.use('/farmer',farmerRoute)
+
+const productRoute=require('./routes/product_route')
+app.use('/product',productRoute)

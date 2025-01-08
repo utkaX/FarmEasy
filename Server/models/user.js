@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const schema = mongoose.Schema
 const bcrypt = require('bcrypt');
 
-
 const userSchema = new schema(
     {
         username:{
@@ -49,6 +48,22 @@ userSchema.pre('save', async function (next) {
       next();
     }
   });
-  
+
+
+  // userSchema.methods.generateToken=async function () {
+    
+  //   try {
+  //     return jwt.sign(
+  //       {
+  //         userId:this._id.toString(),
+  //         email:this.email,
+  //         role:this.role
+  //       },
+  //       process.env.JWT_SECRET_KEY
+  //     )
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
 module.exports = mongoose.model("user", userSchema)

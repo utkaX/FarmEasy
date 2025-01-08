@@ -1,9 +1,11 @@
 const { response } = require("express");
 const User = require("../models/user");
-const bcrypt=require('bcrypt')
+const bcrypt=require('bcrypt');
+const jwt=require('jsonwebtoken')
+const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 exports.createUser = async (req, res) => {
-    const users = req.body;  // Assuming an array of users is sent in the request body
+    const users = req.body; // Assuming an array of users is sent in the request body
 
     try {
         const createdUsers = [];
@@ -11,17 +13,32 @@ exports.createUser = async (req, res) => {
         // Loop through the array of users
         for (const userData of users) {
             const { username, email, password, role } = userData;
+
+            // Create and save the user
             const user = new User({ username, email, password, role });
             await user.save();
 
-            // Push the created user to the result array
-            createdUsers.push(user);
+            // Generate a JWT token for the user
+            const token = jwt.sign(
+                { userId: user._id, email: user.email, role: user.role },
+                JWT_SECRET,
+                { expiresIn: '1h' } // Token expires in 1 hour
+            );
+
+            // Add the user and their token to the response
+            createdUsers.push({
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                token,
+            });
         }
 
-        // Send the created users as the response
+        // Send the created users with tokens as the response
         res.status(201).json({ users: createdUsers });
     } catch (error) {
-        console.error("Error creating users: ", error);
+        console.error('Error creating users: ', error);
         res.status(400).json({ error: error.message });
     }
 };
