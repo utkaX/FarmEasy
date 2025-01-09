@@ -26,3 +26,15 @@ app.use('/farmer',farmerRoute)
 
 const productRoute=require('./routes/product_route')
 app.use('/product',productRoute)
+
+const otpRoute=require('./routes/otp_route')
+app.use('/otp',otpRoute)
+
+const orderRoute=require('./routes/order_route')
+app.use('/order',orderRoute)
+
+const cropRoute=require('./routes/crop_route')
+app.use('/crop',cropRoute)
+
+const sellerRoute=require('./routes/seller_route')
+app.use('/seller',sellerRoute)

@@ -1,28 +1,69 @@
-const { response } = require("express");
 const User = require("../models/user");
-const bcrypt=require('bcrypt');
-const jwt=require('jsonwebtoken')
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const OtpModel = require('../models/otp'); // Use a clear name for the OTP model
+require('dotenv').config();
+
 
 exports.createUser = async (req, res) => {
     const users = req.body; // Assuming an array of users is sent in the request body
 
     try {
         const createdUsers = [];
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail', // Replace with your preferred email provider
+            auth: {
+                user: process.env.EMAIL_USER, // Your email address
+                pass: process.env.EMAIL_PASS, // Your email password or app password
+            },
+        });
 
-        // Loop through the array of users
         for (const userData of users) {
             const { username, email, password, role } = userData;
 
+           
             // Create and save the user
             const user = new User({ username, email, password, role });
             await user.save();
+
+            // Generate a random 6-character alphanumeric code
+            const code = crypto.randomBytes(3).toString('hex').toUpperCase();
+
+            // Save the code along with the user ID in the database with an expiration
+            const otpInstance = new OtpModel({
+                userId: user._id,
+                code,
+                expiresAt: new Date(Date.now() + 600* 1000), // Code expires in 10 minutes
+            });
+            await otpInstance.save();
+
+            setTimeout(async () => {
+                try {
+                    await OtpModel.deleteOne({ _id: otpInstance._id });
+                    console.log(`Expired OTP for user ${user._id} deleted.`);
+                } catch (err) {
+                    console.error(`Error deleting expired OTP:`, err);
+                }
+            }, 600 * 1000); // Same duration as OTP expiration
+
+
+
+            // Send the code to the user's email
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER, // Sender address
+                to: email, // Recipient address
+                subject: 'Your Verification Code',
+                text: `Hello ${username},\n\nYour verification code is: ${code}\n\nThis code will expire in 30 seconds.`,
+            });
 
             // Generate a JWT token for the user
             const token = jwt.sign(
                 { userId: user._id, email: user.email, role: user.role },
                 JWT_SECRET,
-                { expiresIn: '1h' } // Token expires in 1 hour
+                { expiresIn: '1h' }
             );
 
             // Add the user and their token to the response
@@ -35,13 +76,14 @@ exports.createUser = async (req, res) => {
             });
         }
 
-        // Send the created users with tokens as the response
+        // Send response with all created users
         res.status(201).json({ users: createdUsers });
     } catch (error) {
         console.error('Error creating users: ', error);
         res.status(400).json({ error: error.message });
     }
 };
+
 
 
 

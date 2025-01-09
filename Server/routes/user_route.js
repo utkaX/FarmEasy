@@ -8,7 +8,7 @@ const {
    updateUserById,
    deleteUserById,
    updatePasswordById
-}=require('../Controller/user_controller')
+}=require('../controller/user_controller')
 
 router.post('/',createUser)
 router.get('/all',getAllUsers)

@@ -12,16 +12,25 @@ const orderSchema = new Schema({
         ref: 'User', // Reference to the User schema (seller)
         required: true
     },
-    listingId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product', // Reference to the Product schema (listing)
-        required: true
-    },
-    quantityOrdered: {
-        type: Number,
-        required: true,
-        min: 1 // Ensures at least one product is ordered
-    },
+    products: [
+        {
+            productId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product', // Reference to the Product schema
+                required: true
+            },
+            quantityOrdered: {
+                type: Number,
+                required: true,
+                min: 1 // Ensures at least one product is ordered
+            },
+            price: {
+                type: Number,
+                required: true,
+                min: 0 // Price of the product
+            }
+        }
+    ],
     totalPrice: {
         type: Number,
         required: true,
@@ -47,7 +56,7 @@ const orderSchema = new Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['credit card', 'paypal', 'bank transfer'],
+        enum: ['credit card', 'google pay', 'bank transfer'],
         required: true
     },
     expectedDeliveryDate: {
