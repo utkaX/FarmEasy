@@ -2,9 +2,9 @@ const express=require('express')
 const Router=express.Router()
 
 const{
-createSellerProfile,
+    createSellerProfile,
 getSellerProfile,
-updateSellerProfile,
+updateSellerProfileByUserId,
 deleteSellerProfile,
 getAllSellerProfiles
 }=require('../controller/seller_controller')
@@ -13,7 +13,7 @@ getAllSellerProfiles
 Router.get('/:id',getSellerProfile)
 Router.get('/',getAllSellerProfiles)
 Router.post('/create',createSellerProfile)
-Router.put('/update/:id',updateSellerProfile)
+Router.put('/update/:id',updateSellerProfileByUserId)
 Router.delete('/delete/:id',deleteSellerProfile)
 
 

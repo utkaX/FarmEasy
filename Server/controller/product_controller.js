@@ -1,11 +1,12 @@
 const Product = require('../models/product');
-const mongoose=require('mongoose')
+const mongoose = require('mongoose');
 
-
+// Create a product
 exports.createProduct = async (req, res) => {
     try {
-        const { sellerId, productName, productType, quantity, pricePerUnit, description, imageUrl, status, category, tags } = req.body;
+        const { sellerId, productName, productType, quantity, pricePerUnit, description, imageUrls, status, category, tags } = req.body;
 
+        // Ensure that the imageUrls is an array, even if it's passed as a single string
         const product = new Product({
             sellerId,
             productName,
@@ -13,7 +14,7 @@ exports.createProduct = async (req, res) => {
             quantity,
             pricePerUnit,
             description,
-            imageUrl,
+            imageUrls: Array.isArray(imageUrls) ? imageUrls : [imageUrls],  // Handling multiple image URLs
             status,
             category,
             tags,
@@ -26,9 +27,7 @@ exports.createProduct = async (req, res) => {
     }
 };
 
-
-//  Get all products
-
+// Get all products
 exports.getAllProducts = async (req, res) => {
     try {
         const products = await Product.find();
@@ -38,8 +37,7 @@ exports.getAllProducts = async (req, res) => {
     }
 };
 
-
-//   Get a product by ID
+// Get a product by ID
 exports.getProductById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -55,13 +53,16 @@ exports.getProductById = async (req, res) => {
     }
 };
 
-
 // Update a product
-
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
+
+        // Ensure that imageUrls is handled as an array
+        if (updates.imageUrls && !Array.isArray(updates.imageUrls)) {
+            updates.imageUrls = [updates.imageUrls];  // If it's not an array, convert it to one
+        }
 
         const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true });
 
@@ -74,7 +75,6 @@ exports.updateProduct = async (req, res) => {
         res.status(500).json({ message: 'Failed to update product', error: error.message });
     }
 };
-
 
 // Delete a product
 exports.deleteProduct = async (req, res) => {
@@ -93,16 +93,15 @@ exports.deleteProduct = async (req, res) => {
     }
 };
 
-
-//Get products by seller
+// Get products by seller
 exports.getProductsBySeller = async (req, res) => {
     try {
         const { sellerId } = req.params;
 
         // Convert sellerId to ObjectId (if it's not already)
-        const sellerObjectId =new mongoose.Types.ObjectId(sellerId);
+        const sellerObjectId = new mongoose.Types.ObjectId(sellerId);
 
-        const products = await Product.find({ sellerId: sellerId });
+        const products = await Product.find({ sellerId: sellerObjectId });
 
         if (products.length === 0) {
             return res.status(404).json({ message: 'No products found for this seller' });
@@ -114,15 +113,12 @@ exports.getProductsBySeller = async (req, res) => {
     }
 };
 
-
 // Search products by name, category, or tags
 exports.searchProducts = async (req, res) => {
-    console.log("123")
+    console.log("Searching products...");
     try {
         const { query } = req.query.q; // Access the 'query' parameter
-        query="organic"
-        console.log(query)
-        // Ensure query is provided
+
         if (!query) {
             return res.status(400).json({ message: 'Search query is required' });
         }

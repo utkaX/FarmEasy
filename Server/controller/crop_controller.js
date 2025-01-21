@@ -1,7 +1,8 @@
 const Crop = require('../models/crop');  // Import Crop model
 
+// Create a new crop
 exports.createCrop = async (req, res) => {
-    const { cropname, farmerID, quantity, unit, plantedDate, harvestDate, growthStatus, pestsOrDiseases } = req.body;
+    const { cropname, farmerID, quantity, unit, plantedDate, harvestDate, growthStatus, pestsOrDiseases, imageUrls } = req.body;
 
     try {
         // Create a new crop using the request body data
@@ -13,7 +14,8 @@ exports.createCrop = async (req, res) => {
             plantedDate,
             harvestDate,
             growthStatus,
-            pestsOrDiseases
+            pestsOrDiseases,
+            imageUrls  // Add the imageUrls field
         });
 
         // Save the crop to the database
@@ -27,8 +29,7 @@ exports.createCrop = async (req, res) => {
     }
 };
 
-
-
+// Get all crops
 exports.getAllCrops = async (req, res) => {
     try {
         // Fetch all crops from the database
@@ -42,8 +43,7 @@ exports.getAllCrops = async (req, res) => {
     }
 };
 
-
-
+// Get a crop by ID
 exports.getCropById = async (req, res) => {
     const { id } = req.params;  // Get crop ID from the URL params
 
@@ -62,11 +62,10 @@ exports.getCropById = async (req, res) => {
     }
 };
 
-
-
+// Update a crop by ID
 exports.updateCropById = async (req, res) => {
     const { id } = req.params;  // Get crop ID from the URL params
-    const { cropname, quantity, unit, plantedDate, harvestDate, growthStatus, pestsOrDiseases } = req.body;
+    const { cropname, quantity, unit, plantedDate, harvestDate, growthStatus, pestsOrDiseases, imageUrls } = req.body;
 
     try {
         // Find the crop by ID
@@ -83,6 +82,7 @@ exports.updateCropById = async (req, res) => {
         if (harvestDate) crop.harvestDate = harvestDate;
         if (growthStatus) crop.growthStatus = growthStatus;
         if (pestsOrDiseases) crop.pestsOrDiseases = pestsOrDiseases;
+        if (imageUrls) crop.imageUrls = imageUrls;  // Update imageUrls if provided
 
         // Save the updated crop to the database
         await crop.save();
@@ -95,8 +95,7 @@ exports.updateCropById = async (req, res) => {
     }
 };
 
-
-
+// Delete a crop by ID
 exports.deleteCropById = async (req, res) => {
     const { id } = req.params;  // Get crop ID from the URL params
 

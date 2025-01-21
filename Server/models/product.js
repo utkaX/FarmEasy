@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Schema=mongoose.Schema
+const Schema = mongoose.Schema;
 
 const productSchema = new Schema(
     {
@@ -32,8 +32,8 @@ const productSchema = new Schema(
             type: String,
             trim: true,
         },
-        imageUrl: {
-            type: String,
+        imageUrls: {  
+            type: [String],  // Array of image URLs
             required: true,
         },
         status: {
@@ -51,7 +51,7 @@ const productSchema = new Schema(
             default: Date.now,
         },
         tags: {
-            type: [String], // Array of strings for search tags
+            type: [String], 
         },
         unitsSold: {
             type: Number,
@@ -59,7 +59,7 @@ const productSchema = new Schema(
             min: 0,
         }
     },
-    { timestamps: true } 
+    { timestamps: true }
 );
 
 module.exports = mongoose.model('Product', productSchema);

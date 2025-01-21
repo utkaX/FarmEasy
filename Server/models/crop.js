@@ -17,10 +17,13 @@ const cropSchema = new Schema({
     pestsOrDiseases: {
         type: String,
         default: null,  
+    },
+    imageUrls: {
+        type: [String], 
+        default: []   
     }
 }, {
     timestamps: true 
 });
 
-// Export the Crop model
 module.exports = mongoose.model('Crop', cropSchema);

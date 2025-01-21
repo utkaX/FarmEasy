@@ -16,7 +16,7 @@ const farmerSchema = new Schema({
             state: { type: String, required: true },
             zipCode: { type: String, required: true },
         },
-        completed: { type: Boolean, default: false }, // Status for this step
+        completed: { type: Boolean, default: false }, 
     },
 
     // Step 2: Farm Details
@@ -25,9 +25,9 @@ const farmerSchema = new Schema({
         farmLocation: { type: String, required: true },
         farmSize: { type: Number, required: true }, // Size in acres or hectares
         farmType: { type: String, enum: ['organic', 'conventional', 'mixed'], required: true },
-        cropsGrown: [{ type: String }], // Array of crops
-        livestock: [{ type: String }], // Optional: If they raise animals
-        completed: { type: Boolean, default: false }, // Status for this step
+        cropsGrown: [{ type: String }], 
+        livestock: [{ type: String }], 
+        completed: { type: Boolean, default: false }, 
     },
 
     // Step 3: Resource Accessibility
@@ -39,7 +39,7 @@ const farmerSchema = new Schema({
     },
 
     // Overall Completion Status
-    isProfileComplete: { type: Boolean, default: false }, // True if all steps are completed
+    isProfileComplete: { type: Boolean, default: false }, 
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });

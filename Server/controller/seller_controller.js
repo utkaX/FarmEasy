@@ -2,52 +2,16 @@ const Seller = require('../models/seller'); // Import Seller schema
 
 // Create or Update Seller Profile in a Single Step
 exports.createSellerProfile = async (req, res) => {
-    const { userId, businessName, gstNumber, businessCategory, contactNumber, businessEmail, businessAddress, logo, websiteUrl, socialMediaLinks } = req.body;
-
     try {
-        let sellerProfile = await Seller.findOne({ userId });
-
-        // If the seller profile doesn't exist, create a new one
-        if (!sellerProfile) {
-            sellerProfile = new Seller({ userId });
-        }
-
-        // Step 1: Business Information
-        sellerProfile.businessInfo.businessName = businessName;
-        sellerProfile.businessInfo.gstNumber = gstNumber;
-        sellerProfile.businessInfo.businessCategory = businessCategory;
-        sellerProfile.businessInfo.completed = true;  // Mark as completed for Step 1
-
-        // Step 2: Contact Information
-        sellerProfile.contactInfo.contactNumber = contactNumber;
-        sellerProfile.contactInfo.businessEmail = businessEmail;
-        sellerProfile.contactInfo.businessAddress = businessAddress;
-        sellerProfile.contactInfo.completed = true;  // Mark as completed for Step 2
-
-        // Step 3: Business Profile (Logo, Website URL, Social Media Links)
-        sellerProfile.businessProfile.logo = logo;
-        sellerProfile.businessProfile.websiteUrl = websiteUrl;
-        sellerProfile.businessProfile.socialMediaLinks = socialMediaLinks;
-        sellerProfile.businessProfile.completed = true;  // Mark as completed for Step 3
-
-        // Finalize Profile if all steps are completed
-        if (
-            sellerProfile.businessInfo.completed &&
-            sellerProfile.contactInfo.completed &&
-            sellerProfile.businessProfile.completed
-        ) {
-            sellerProfile.isProfileComplete = true;  // Profile is complete
-        }
-
-        // Save the profile
-        await sellerProfile.save();
-
-        res.status(200).json({ message: 'Seller profile created/updated successfully', sellerProfile });
+        const sellerData = req.body;
+        const seller = new Seller(sellerData);
+        await seller.save();
+        res.status(201).json({ message: "Seller profile created successfully!", seller });
     } catch (error) {
-        console.error('Error creating or updating seller profile:', error);
         res.status(400).json({ error: error.message });
     }
 };
+
 
 
 
@@ -88,13 +52,15 @@ exports.getAllSellerProfiles = async (req, res) => {
 
 
 // Update Seller Profile by User ID
-exports.updateSellerProfile = async (req, res) => {
-    const { userId } = req.params;  // Extract userId from the URL
+exports.updateSellerProfileByUserId = async (req, res) => {
+    
+    const userId  = req.params.id;  // Extract userId from the URL
+    console.log(userId)
     const updatedData = req.body;  // Data sent to update the profile
 
     try {
         const sellerProfile = await Seller.findOne({ userId });
-
+        console.log(sellerProfile)
         if (!sellerProfile) {
             return res.status(404).json({ error: 'Seller profile not found' });
         }
@@ -114,7 +80,7 @@ exports.updateSellerProfile = async (req, res) => {
 
 // Delete Seller Profile by User ID
 exports.deleteSellerProfile = async (req, res) => {
-    const { userId } = req.params;  // Extract userId from the URL
+    const userId = req.params.id;  // Extract userId from the URL
 
     try {
         const sellerProfile = await Seller.findOneAndDelete({ userId });

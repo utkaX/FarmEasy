@@ -56,7 +56,7 @@ exports.createUser = async (req, res) => {
                 from: process.env.EMAIL_USER, // Sender address
                 to: email, // Recipient address
                 subject: 'Your Verification Code',
-                text: `Hello ${username},\n\nYour verification code is: ${code}\n\nThis code will expire in 30 seconds.`,
+                text: `Hello ${username},\n\nYour verification code is: ${code}\n\nThis code will expire in 10 minutes.`,
             });
 
             // Generate a JWT token for the user

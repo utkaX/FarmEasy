@@ -38,3 +38,6 @@ app.use('/crop',cropRoute)
 
 const sellerRoute=require('./routes/seller_route')
 app.use('/seller',sellerRoute)
+
+const transactionRoute=require('./routes/transaction_route')
+app.use('/transaction',transactionRoute)
