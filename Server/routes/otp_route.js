@@ -3,9 +3,9 @@ const router=express.Router()
 
 
 const{
-postOtp
+requestOtp,
+verifyOtp
 }=require('../controller/otp_controller')
 
-router.post('/:id',postOtp)
 
 module.exports=router

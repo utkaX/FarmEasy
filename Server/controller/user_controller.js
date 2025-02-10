@@ -2,77 +2,28 @@ const User = require("../models/user");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
-const OtpModel = require('../models/otp'); // Use a clear name for the OTP model
 require('dotenv').config();
 
-
+// Create a new user
 exports.createUser = async (req, res) => {
     const users = req.body; // Assuming an array of users is sent in the request body
 
     try {
         const createdUsers = [];
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail', // Replace with your preferred email provider
-            auth: {
-                user: process.env.EMAIL_USER, // Your email address
-                pass: process.env.EMAIL_PASS, // Your email password or app password
-            },
-        });
 
         for (const userData of users) {
             const { username, email, password, role } = userData;
 
-           
             // Create and save the user
             const user = new User({ username, email, password, role });
             await user.save();
 
-            // Generate a random 6-character alphanumeric code
-            const code = crypto.randomBytes(3).toString('hex').toUpperCase();
-
-            // Save the code along with the user ID in the database with an expiration
-            const otpInstance = new OtpModel({
-                userId: user._id,
-                code,
-                expiresAt: new Date(Date.now() + 600* 1000), // Code expires in 10 minutes
-            });
-            await otpInstance.save();
-
-            setTimeout(async () => {
-                try {
-                    await OtpModel.deleteOne({ _id: otpInstance._id });
-                    console.log(`Expired OTP for user ${user._id} deleted.`);
-                } catch (err) {
-                    console.error(`Error deleting expired OTP:`, err);
-                }
-            }, 600 * 1000); // Same duration as OTP expiration
-
-
-
-            // Send the code to the user's email
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER, // Sender address
-                to: email, // Recipient address
-                subject: 'Your Verification Code',
-                text: `Hello ${username},\n\nYour verification code is: ${code}\n\nThis code will expire in 10 minutes.`,
-            });
-
-            // Generate a JWT token for the user
-            const token = jwt.sign(
-                { userId: user._id, email: user.email, role: user.role },
-                JWT_SECRET,
-                { expiresIn: '1h' }
-            );
-
-            // Add the user and their token to the response
+            // Add the user to the response
             createdUsers.push({
                 id: user._id,
                 username: user.username,
                 email: user.email,
                 role: user.role,
-                token,
             });
         }
 
@@ -84,13 +35,10 @@ exports.createUser = async (req, res) => {
     }
 };
 
-
-
-
+// Get all users
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
-
         res.status(200).json(users);
     } catch (error) {
         console.error("Error fetching users: ", error);
@@ -98,20 +46,17 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-
-exports.getUserById=async(req,res)=>
-{
-    try{
-    const id=req.params.id
-    const user=await User.findById(id)
-    res.status(200).json(user);
-    }
-    catch (error) {
+// Get a user by ID
+exports.getUserById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await User.findById(id);
+        res.status(200).json(user);
+    } catch (error) {
         console.error("Error fetching user: ", error);
         res.status(500).json({ error: "An error occurred while fetching user." });
     }
-}
-
+};
 
 // Delete a user by ID
 exports.deleteUserById = async (req, res) => {
@@ -129,9 +74,6 @@ exports.deleteUserById = async (req, res) => {
         res.status(500).json({ error: "An error occurred while deleting user." });
     }
 };
-
-
-
 
 // Update a user by ID
 exports.updateUserById = async (req, res) => {
@@ -156,8 +98,7 @@ exports.updateUserById = async (req, res) => {
     }
 };
 
-
-
+// Update password by ID
 exports.updatePasswordById = async (req, res) => {
     const { oldPassword, newPassword } = req.body;
 
@@ -184,3 +125,127 @@ exports.updatePasswordById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// Login user
+exports.loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and password are required",
+            });
+        }
+
+        // Check if the user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(403).json({
+                success: false,
+                message: "Incorrect password",
+            });
+        }
+
+        // Generate a JWT token for the authenticated user
+        const token = jwt.sign(
+            { userId: user._id, email: user.email, role: user.role },
+            JWT_SECRET,
+            { expiresIn: "1h" } // Token is valid for 1 hour
+        );
+
+        // Respond with user details and token
+        res.status(200).json({
+            success: true,
+            message: "Login successful",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+            },
+            token, // JWT token is included in the response
+        });
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
+
+
+exports.login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: "please fill all the details carefully",
+        });
+      }
+  
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: "User is not registered",
+        });
+      }
+  
+      const payload = {
+        email: user.email,
+        id: user._id,
+        role: user.role,
+      };
+  
+      if (await bcrypt.compare(password, user.password)) {
+        let token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "2h",
+        });
+  
+        user.token = token;
+        user.password = undefined;
+  
+        // const options = {
+        //   expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        //   httpOnly: true,
+        // };
+  
+        // res.cookie("jobcookie", token, options).status(200).json({
+        //   success: true,
+        //   token,
+        //   user,
+        //   message: "User login successfully",
+        // });
+
+        res.status(200).json({
+            success: true,
+            token,
+            user,
+            message: "User login successfully",
+          });
+      } else {
+        return res.status(403).json({
+          success: false,
+          message: "Password incorrect",
+        });
+      }
+    } catch (error) {
+      return res.status(403).json({
+        success: false,
+        message: "Error in login",
+      });
+    }
+  };

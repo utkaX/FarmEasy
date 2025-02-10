@@ -1,37 +1,34 @@
-const otp = require('../models/otp');
+const OTP = require('../models/otp');
+const User = require('../models/user'); // Assuming you have a User model
 
-exports.postOtp = async (req, res) => {
-    const { id } = req.params; // Extract user ID from request params
-    const  otpTyped  = req.body.code; // Extract OTP typed by the user from request body
-
+// Endpoint to request OTP
+exports.requestOtp = async (req, res) => {
     try {
-        // Find the OTP record associated with the user
-        const otpRecord = await otp.findOne({ userId: id });
-        // console.log(otpRecord.code)
-        // console.log(req.body.code)
+        const { email } = req.body;
+        const otp = new OTP({ email });
+        await otp.save();
+        res.status(200).json({ message: 'OTP sent to email' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Endpoint to verify OTP
+exports.verifyOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const otpRecord = await OTP.findOne({ email, otp, used: false });
 
         if (!otpRecord) {
-            return res.status(404).json({ error: 'OTP not found or expired' });
+            return res.status(400).json({ error: 'Invalid OTP or OTP expired' });
         }
 
-        // Check if the OTP has expired
-        if (new Date() > otpRecord.expiresAt) {
-            return res.status(400).json({ error: 'OTP has expired' });
-        }
+        otpRecord.used = true;
+        await otpRecord.save();
 
-        // Check if the OTP matches
-        if (otpTyped !== otpRecord.code) {
-            return res.status(400).json({ error: 'Invalid OTP' });
-        }
-
-        // OTP is valid and matches
+        // Optionally, you can now create the user or perform other actions
         res.status(200).json({ message: 'OTP verified successfully' });
-
-        // Optional: Clean up by deleting the OTP record after verification
-        await otp.findByIdAndDelete(otpRecord._id);
-
     } catch (error) {
-        console.error('Error verifying OTP:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: error.message });
     }
 };

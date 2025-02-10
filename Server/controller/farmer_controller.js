@@ -1,18 +1,35 @@
 const Farmer = require('../models/farmer'); // Assuming your schema is in models/farmer.js
-
+const User=require('../models/user')
 // Create a new farmer profile
 exports.createFarmer = async (req, res) => {
     try {
-        const farmerData = req.body;
-        const farmer = new Farmer(farmerData);
+        console.log("Incoming Farmer Data:", req.body);
+
+        const { userId, personalDetails, farmDetails, resourceAccessibility } = req.body;
+
+        // Validate if userId exists in the User collection
+        const userExists = await User.findById(userId);
+        if (!userExists) {
+            return res.status(400).json({ error: "Invalid userId. User does not exist." });
+        }
+
+        const farmer = new Farmer({
+            userId,
+            personalDetails,
+            farmDetails,
+            resourceAccessibility,
+            isProfileComplete: personalDetails.completed && farmDetails.completed && resourceAccessibility.completed
+        });
 
         await farmer.save();
         res.status(201).json({ message: 'Farmer profile created successfully', farmer });
+
     } catch (error) {
         console.error("Error creating farmer profile:", error);
         res.status(400).json({ error: error.message });
     }
 };
+
 
 // Get all farmer profiles
 exports.getAllFarmers = async (req, res) => {
@@ -34,6 +51,20 @@ exports.getFarmerById = async (req, res) => {
             return res.status(404).json({ error: 'Farmer profile not found' });
         }
 
+        res.status(200).json(farmer);
+    } catch (error) {
+        console.error("Error fetching farmer profile:", error);
+        res.status(500).json({ error: 'An error occurred while fetching the farmer profile.' });
+    }
+};
+
+exports.getFarmerByUserId = async (req, res) => {
+    try {
+        const farmer = await Farmer.findOne({ userId: req.params.id }); 
+        console.log(farmer)
+        if (farmer == null) {
+            return res.status(404).json({error:'not found'})
+        }
         res.status(200).json(farmer);
     } catch (error) {
         console.error("Error fetching farmer profile:", error);
@@ -77,6 +108,25 @@ exports.deleteFarmerById = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while deleting the farmer profile.' });
     }
 };
+
+
+
+exports.profileCheck = async (req, res) => {
+    try {
+        const farmer = await Farmer.findOne({ userId: req.params.id });
+
+        if (farmer) {
+            return res.status(200).json({ profileExists: true });
+        } else {
+            return res.status(200).json({ profileExists: false });
+        }
+    } catch (error) {
+        console.error("Error checking profile:", error);
+        return res.status(500).json({ message: "Server Error", error });
+    }
+};
+
+
 
 // Mark a step as completed
 exports.markStepComplete = async (req, res) => {
