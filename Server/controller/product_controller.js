@@ -1,12 +1,29 @@
-const Product = require('../models/product');
 const mongoose = require('mongoose');
+const Product = require('../models/product');
+const multer = require('multer');
 
-// Create a product
+// Configure Multer Storage for Cloudinary
+// const storage = new CloudinaryStorage({
+//     cloudinary: cloudinary,
+//     params: {
+//         folder: 'farm_products', // Cloudinary folder name
+//         allowed_formats: ['jpg', 'png', 'jpeg']
+//     }
+// });
+
+// const upload = multer({ storage: storage }).array('images', 5); // Max 5 images
+
+// Create a product with image upload
 exports.createProduct = async (req, res) => {
     try {
-        const { sellerId, productName, productType, quantity, pricePerUnit, description, imageUrls, status, category, tags } = req.body;
+        console.log("Incoming request body:", req.body);
 
-        // Ensure that the imageUrls is an array, even if it's passed as a single string
+        const { sellerId, productName, productType, quantity, pricePerUnit, description, status, category, tags, imageUrls } = req.body;
+        
+        if (!sellerId || !productName || !productType || !quantity || !pricePerUnit || !category || !imageUrls.length) {
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
         const product = new Product({
             sellerId,
             productName,
@@ -14,18 +31,22 @@ exports.createProduct = async (req, res) => {
             quantity,
             pricePerUnit,
             description,
-            imageUrls: Array.isArray(imageUrls) ? imageUrls : [imageUrls],  // Handling multiple image URLs
+            imageUrls,
             status,
             category,
             tags,
         });
 
         const savedProduct = await product.save();
-        res.status(201).json({ message: 'Product created successfully', product: savedProduct });
+        res.status(201).json({ message: "Product created successfully", product: savedProduct });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to create product', error: error.message });
+        console.error("Error in createProduct:", error);
+        res.status(500).json({ message: "Failed to create product", error: error.message });
     }
 };
+
+
+
 
 // Get all products
 exports.getAllProducts = async (req, res) => {
