@@ -6,7 +6,9 @@ const{
 getSellerProfile,
 updateSellerProfileByUserId,
 deleteSellerProfile,
-getAllSellerProfiles
+getAllSellerProfiles,
+checkSellerProfile,
+getSellerByUserId
 }=require('../controller/seller_controller')
 
 
@@ -15,6 +17,7 @@ Router.get('/',getAllSellerProfiles)
 Router.post('/create',createSellerProfile)
 Router.put('/update/:id',updateSellerProfileByUserId)
 Router.delete('/delete/:id',deleteSellerProfile)
-
+Router.get('/check/:id',checkSellerProfile)
+Router.get('/getbyuser/:id',getSellerByUserId)
 
 module.exports=Router

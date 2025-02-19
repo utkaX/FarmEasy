@@ -12,32 +12,27 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await fetch("http://localhost:5000/user/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         dispatch(login(data.user));
         console.log("Login successful:", data);
-
-        // Check if farmer profile exists
-        const profileResponse = await fetch(
-          `http://localhost:5000/farmer/check/${data.user.id}`
-        );
-        const profileData = await profileResponse.json();
-
-        if (profileData.profileExists) {
-          navigate("/home");
+  
+        // Navigate based on user role
+        if (data.user.role === "Seller") {
+          navigate("/seller");
+        } else if (data.user.role === "Admin") {
+          navigate("/admin-dashboard");
         } else {
-          navigate("/profile-check");
+          navigate("/home");
         }
       } else {
         setErrorMessage(data.message || "Something went wrong. Try again!");
@@ -47,6 +42,7 @@ const Login = () => {
       setErrorMessage("Unable to connect to the server. Try again later.");
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-green-50">

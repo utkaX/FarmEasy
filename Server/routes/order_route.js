@@ -18,5 +18,4 @@ Router.get('/:id',getOrderById)
 Router.put('/update/:id',updateOrderStatus)
 Router.delete('/delete/:id',deleteOrder)
 
-
 module.exports=Router

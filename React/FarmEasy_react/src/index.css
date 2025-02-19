@@ -11,3 +11,15 @@
     @apply w-full bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 transition font-semibold shadow-lg;
   }
   
+
+  .input {
+    @apply w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none;
+  }
+  
+  .file-input {
+    @apply w-full border rounded-lg p-2 cursor-pointer;
+  }
+  
+  .btn-primary {
+    @apply w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300;
+  }

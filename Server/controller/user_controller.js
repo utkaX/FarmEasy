@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 require('dotenv').config();
 
-// Create a new user
+
 exports.createUser = async (req, res) => {
     const users = req.body; // Assuming an array of users is sent in the request body
 
@@ -13,6 +13,12 @@ exports.createUser = async (req, res) => {
 
         for (const userData of users) {
             const { username, email, password, role } = userData;
+
+            // Check if email already exists
+            const existingUser = await User.findOne({ email });
+            if (existingUser) {
+                return res.status(400).json({ message: "Email already exists. Please use a different email." });
+            }
 
             // Create and save the user
             const user = new User({ username, email, password, role });
@@ -30,10 +36,11 @@ exports.createUser = async (req, res) => {
         // Send response with all created users
         res.status(201).json({ users: createdUsers });
     } catch (error) {
-        console.error('Error creating users: ', error);
+        console.error("Error creating users: ", error);
         res.status(400).json({ error: error.message });
     }
 };
+
 
 // Get all users
 exports.getAllUsers = async (req, res) => {

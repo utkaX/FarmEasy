@@ -1,12 +1,21 @@
 import React from "react";
 import logo from "../../assets/logo.png"; // Ensure correct path
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserTie } from "@fortawesome/free-solid-svg-icons"; // Import correct icon
+import { faArrowCircleRight, faArrowRight, faArrowRightFromBracket, faArrowRotateLeft, faArrowUpRightFromSquare, faDoorClosed, faDoorOpen, faUserTie } from "@fortawesome/free-solid-svg-icons"; // Import correct icon
 import { Link } from "react-router-dom";
-
+import { logout } from "../Redux/authSlice";
+import { useDispatch } from "react-redux";
+import { FaDoorClosed } from "react-icons/fa";
 const Header = () => {
   const userProfile = null; // Replace with actual user profile URL
+  const dispatch=useDispatch();
 
+
+  const Logout=()=>
+  {
+      dispatch(logout())
+      navigate("/login", { replace: true });
+  }
   return (
     <header className="flex items-center justify-between px-10 py-4 bg-green-50 border-b border-green-300 shadow-lg">
       {/* Logo Section - Aligned more to the left */}
@@ -65,7 +74,11 @@ const Header = () => {
           className="w-10 h-10 rounded-full border-2 border-green-600 shadow-md cursor-pointer"
         /> */}
 
-        <FontAwesomeIcon icon={faUserTie} className="text-green-700 text-3xl" />
+        <Link to="/myprofile"><FontAwesomeIcon icon={faUserTie} className="text-green-700 text-3xl" />
+        </Link>
+
+        <Link onClick={Logout}> <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-green-700 text-3xl" />
+        </Link>
 
         {/* Mobile Menu Button */}
         <button className="lg:hidden">

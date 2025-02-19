@@ -5,7 +5,7 @@ import Footer from "../Footer/Footer";
 
 const Layout = () => {
     const location = useLocation();
-    const hideHeaderRoutes = ["/login"]; // Add more routes if needed
+    const hideHeaderRoutes = ["/login","/signup","/profile-check"]; // Add more routes if needed
   
   return (
     <div>

@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 const Footer = () => {
     return (
       <footer className="bg-gray-900 text-white py-10 px-5">
@@ -23,15 +25,15 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold text-gray-300">Follow Us</h3>
             <div className="flex space-x-4 mt-3">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition">
+              <Link to="#" className="text-gray-400 hover:text-blue-400 transition">
                 <i className="fab fa-facebook-f text-2xl"></i>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-sky-400 transition">
+              </Link>
+              <Link to="#" className="text-gray-400 hover:text-sky-400 transition">
                 <i className="fab fa-twitter text-2xl"></i>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-pink-400 transition">
+              </Link>
+              <Link to="#" className="text-gray-400 hover:text-pink-400 transition">
                 <i className="fab fa-instagram text-2xl"></i>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

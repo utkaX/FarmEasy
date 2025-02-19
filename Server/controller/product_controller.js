@@ -117,22 +117,25 @@ exports.deleteProduct = async (req, res) => {
 // Get products by seller
 exports.getProductsBySeller = async (req, res) => {
     try {
-        const { sellerId } = req.params;
+        let  sellerId  = req.params.id;
 
-        // Convert sellerId to ObjectId (if it's not already)
-        const sellerObjectId = new mongoose.Types.ObjectId(sellerId);
-
-        const products = await Product.find({ sellerId: sellerObjectId });
-
-        if (products.length === 0) {
-            return res.status(404).json({ message: 'No products found for this seller' });
+        // ✅ Check if sellerId is valid
+        if (!mongoose.isValidObjectId(sellerId)) {
+            return res.status(400).json({ message: "Invalid seller ID format. Must be a 24-character ObjectId." });
         }
 
-        res.status(200).json({ products });
+        const products = await Product.find({ sellerId });
+
+        if (!products.length) {
+            return res.status(404).json({ message: "No products found for this seller." });
+        }
+
+        res.status(200).json({ success: true, products });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to retrieve products by seller', error: error.message });
+        res.status(500).json({ message: "Failed to retrieve products.", error: error.message });
     }
 };
+
 
 // Search products by name, category, or tags
 exports.searchProducts = async (req, res) => {

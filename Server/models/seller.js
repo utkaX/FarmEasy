@@ -10,6 +10,8 @@ const sellerSchema = new Schema({
         gstNumber: { type: String, required: true }, 
         businessCategory: { type: String, enum: ['Retail', 'Wholesale', 'Service'], required: true },  // Type of business
         completed: { type: Boolean, default: false }, // Status for this step
+        businessEmail: { type: String, required: true, trim: true },
+
     },
 
     // Step 2: Contact Information
