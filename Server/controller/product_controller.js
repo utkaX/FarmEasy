@@ -16,7 +16,7 @@ const multer = require('multer');
 // Create a product with image upload
 exports.createProduct = async (req, res) => {
     try {
-        console.log("Incoming request body:", req.body);
+        // console.log("Incoming request body:", req.body);
 
         const { sellerId, productName, productType, quantity, pricePerUnit, description, status, category, tags, imageUrls } = req.body;
         

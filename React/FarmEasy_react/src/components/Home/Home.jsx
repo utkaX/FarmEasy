@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
+import Weather from "./Weather";
+import RecommendationForm from "../Crop/RecommendationForm";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -17,6 +19,7 @@ const Home = () => {
   return (
     <div>
       <h1>Welcome, {user?.email}</h1>
+      <Weather/>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );

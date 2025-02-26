@@ -58,19 +58,39 @@ exports.getFarmerById = async (req, res) => {
     }
 };
 
-exports.getFarmerByUserId = async (req, res) => {
+
+exports.getFarmerByUserId=async (req,res)=>
+{
+
+    const userId=req.params.id
+
     try {
-        const farmer = await Farmer.findOne({ userId: req.params.id }); 
-        console.log(farmer)
-        if (farmer == null) {
-            return res.status(404).json({error:'not found'})
+        const farmer = await Farmer.find({userId:userId})
+
+        if (!farmer) {
+            return res.status(404).json({ error: 'Farmer profile not found' });
         }
+
         res.status(200).json(farmer);
     } catch (error) {
         console.error("Error fetching farmer profile:", error);
         res.status(500).json({ error: 'An error occurred while fetching the farmer profile.' });
     }
-};
+}
+
+// exports.getFarmerByUserId = async (req, res) => {
+//     try {
+//         const farmer = await Farmer.findOne({ userId: req.params.id }); 
+//         console.log(farmer)
+//         if (farmer == null) {
+//             return res.status(404).json({error:'not found'})
+//         }
+//         res.status(200).json(farmer);
+//     } catch (error) {
+//         console.error("Error fetching farmer profile:", error);
+//         res.status(500).json({ error: 'An error occurred while fetching the farmer profile.' });
+//     }
+// };
 
 // Update a farmer profile by ID
 exports.updateFarmerById = async (req, res) => {

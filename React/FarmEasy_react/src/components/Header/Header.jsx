@@ -35,13 +35,16 @@ const Header = () => {
         <Link to="/home" className="text-green-700 font-medium text-lg hover:text-green-900 transition duration-300">
           Home
         </Link>
+        <Link to="/predict" className="text-green-700 font-medium text-lg hover:text-green-900 transition duration-300">
+          Prodict Crop
+        </Link>
         <Link to="/team" className="text-green-700 font-medium text-lg hover:text-green-900 transition duration-300">
           Buy
         </Link>
         <Link to="/sell" className="text-green-700 font-medium text-lg hover:text-green-900 transition duration-300">
           Sell
         </Link>
-        <Link to="/blog" className="text-green-700 font-medium text-lg hover:text-green-900 transition duration-300">
+        <Link to="/myproducts" className="text-green-700 font-medium text-lg hover:text-green-900 transition duration-300">
           My Products
         </Link>
         <Link to="/about" className="text-green-700 font-medium text-lg hover:text-green-900 transition duration-300">

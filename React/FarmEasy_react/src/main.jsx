@@ -32,6 +32,10 @@ import SearchResults from "./components/Marketplace/Header/SearchResults.jsx";
 import MyProfile from "./components/Profile/MyProfile.jsx";
 import SellerProfile from "./components/Marketplace/Profile/MyProfile"
 import Cart from "./components/Marketplace/Cart/Cart.jsx";
+import FarmerProduct from "./components/Product/MyProducts.jsx";
+import FarmerProductDetails from "./components/Product/ProductDetails.jsx"
+import RecommendationForm from "./components/Crop/RecommendationForm.jsx";
+
 
 
 const router = createBrowserRouter(
@@ -48,6 +52,10 @@ const router = createBrowserRouter(
         <Route path="profile-check" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
         <Route path="sell" element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />        <Route path="sell" element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />
         <Route path="myprofile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
+        <Route path="myproducts" element={<ProtectedRoute><FarmerProduct/></ProtectedRoute>}/>
+        <Route path="product/:id" element={<ProtectedRoute><FarmerProductDetails/></ProtectedRoute>}/>
+        <Route path="predict" element={<ProtectedRoute><RecommendationForm/></ProtectedRoute>}/>
+
 
 
       </Route>
