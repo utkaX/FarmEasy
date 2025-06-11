@@ -18,7 +18,7 @@ A Smart Agriculture Platform with Marketplace, Weather Intelligence, Crop & Dise
 - 🛒 **Marketplace** – Farmers and users can buy or sell seeds, tools, and other agri-products.
 - 👨‍🌾 **Farmer Profile** – Users can manage their farm data, address, and personal details securely.
 - 🔒 **Authentication** – Secure login, registration, and role-based access using Firebase or JWT.
-- 💻 **Responsive UI** – Clean and mobile-friendly interface with Tailwind CSS.
+- 💻 **Responsive UI** – Clean interface with Tailwind CSS.
 
 ---
 
@@ -46,8 +46,8 @@ A Smart Agriculture Platform with Marketplace, Weather Intelligence, Crop & Dise
 
 ## ⚙️ Tech Stack
 
-| Layer        | Technology                  |
-|--------------|------------------------------|
+| Layer        | Technology                    |
+|--------------|-------------------------------|
 | Frontend     | React.js, Tailwind CSS        |
 | Backend      | Node.js, Express.js           |
 | Database     | MongoDB (Mongoose)            |
@@ -56,6 +56,7 @@ A Smart Agriculture Platform with Marketplace, Weather Intelligence, Crop & Dise
 | State Management | Redux                     |
 
 ---
+
 ## ✨ Admin Features
   🧑‍💼 Overview on Farmers & Buyers
 ![image](https://github.com/user-attachments/assets/1d8acb9e-3a09-4b35-addb-07021b799f5e)
